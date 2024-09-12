@@ -1,12 +1,16 @@
 import { DefaultAzureCredential } from '@azure/identity';
 import {
   AnonymousCredential,
+  BlobSASPermissions,
   BlobServiceClient,
+  generateBlobSASQueryParameters,
   newPipeline,
   PublicAccessType,
   StorageSharedKeyCredential,
 } from '@azure/storage-blob';
+import * as path from 'path';
 import internal from 'stream';
+import { v4 as uuidv4 } from 'uuid';
 
 type CommonConfig = {
   account: string;
@@ -45,6 +49,18 @@ type StrapiFile = File & {
   mime: string;
   path: string;
 };
+
+function hackCustomFilename(file: StrapiFile) {
+  const fileName = file.name.replace(/@/g, '/');
+
+  const parsedPath = path.parse(fileName);
+  const uuid = uuidv4();
+
+  const newFileName = `${parsedPath.name}_${uuid}`;
+  const newFilePath = path.join(parsedPath.dir, newFileName);
+
+  file.hash = newFilePath;
+}
 
 function trimParam(input?: string) {
   return typeof input === 'string' ? input.trim() : '';
@@ -98,6 +114,32 @@ const uploadOptions: CommonConfig['uploadOptions'] = {
   maxBuffers: 20,
 };
 
+async function handleSignedUrl(config: DefaultConfig, file: StrapiFile): Promise<string> {
+  const account = trimParam(config.account);
+  const accountKey = trimParam(config.accountKey);
+  const cerds = new StorageSharedKeyCredential(account, accountKey);
+  const blobSvcClient = new BlobServiceClient(`https://${account}.blob.core.windows.net`, cerds);
+  const client = blobSvcClient.getContainerClient(trimParam(config.containerName));
+
+  const blobName = getFileName(config.defaultPath, file);
+  const blobClient = client.getBlobClient(blobName);
+
+  const blobSAS = generateBlobSASQueryParameters(
+    {
+      containerName: config.containerName,
+      blobName,
+      permissions: BlobSASPermissions.parse('r'),
+      startsOn: new Date(),
+      expiresOn: new Date(new Date().valueOf() + 86400),
+    },
+    cerds
+  ).toString();
+
+  const sasUrl = blobClient.url + '?' + blobSAS;
+
+  return sasUrl;
+}
+
 async function handleUpload(
   config: Config,
   blobSvcClient: BlobServiceClient,
@@ -112,7 +154,9 @@ async function handleUpload(
       trimParam(config?.publicAccessType) === 'container' ||
       trimParam(config?.publicAccessType) === 'blob'
     ) {
-      await containerClient.createIfNotExists({ access: config.publicAccessType });
+      await containerClient.createIfNotExists({
+        access: config.publicAccessType,
+      });
     } else {
       await containerClient.createIfNotExists();
     }
@@ -208,14 +252,23 @@ module.exports = {
   init: (config: Config) => {
     const blobSvcClient = makeBlobServiceClient(config);
     return {
-      upload(file: StrapiFile) {
+      async upload(file: StrapiFile) {
+        hackCustomFilename(file);
         return handleUpload(config, blobSvcClient, file);
       },
-      uploadStream(file: StrapiFile) {
+      async uploadStream(file: StrapiFile) {
+        hackCustomFilename(file);
         return handleUpload(config, blobSvcClient, file);
       },
-      delete(file: StrapiFile) {
+      async delete(file: StrapiFile) {
         return handleDelete(config, blobSvcClient, file);
+      },
+      async isPrivate() {
+        return true;
+      },
+      async getSignedUrl(file: StrapiFile) {
+        const signedUrl = await handleSignedUrl(config as DefaultConfig, file);
+        return { url: signedUrl };
       },
     };
   },
