@@ -138,8 +138,8 @@ async function handleUpload(
 
     await client.uploadStream(
         file.stream,
-        (config.uploadOptions || uploadOptions).bufferSize,
-        (config.uploadOptions || uploadOptions).maxBuffers,
+        config.uploadOptions?.bufferSize || uploadOptions?.bufferSize,
+        config.uploadOptions?.maxBuffers || uploadOptions?.maxBuffers,
         options
     );
 }
