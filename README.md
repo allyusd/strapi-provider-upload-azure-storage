@@ -1,12 +1,12 @@
-# Looking for additional maintainer
-
-If you're interesting in helping maintain the package please shoot me a message. Thanks - Jake
-
 # Strapi Provider Upload Azure Storage
 
 Plugin enabling image uploading to azure storage from strapi.
 
-[![NpmVersion](https://img.shields.io/npm/v/strapi-provider-upload-azure-storage.svg)](https://www.npmjs.com/package/strapi-provider-upload-azure-storage) [![NpmDownloads](https://img.shields.io/npm/dt/strapi-provider-upload-azure-storage.svg)](https://www.npmjs.com/package/strapi-provider-upload-azure-storage)
+[![NpmVersion](https://img.shields.io/npm/v/@allyusd/strapi-provider-upload-azure-storage.svg)](https://www.npmjs.com/package/@allyusd/strapi-provider-upload-azure-storage) [![NpmDownloads](https://img.shields.io/npm/dt/@allyusd/strapi-provider-upload-azure-storage.svg)](https://www.npmjs.com/package/@allyusd/strapi-provider-upload-azure-storage)
+
+## Fork Notice
+
+This is a fork of the original [jakeFeldman/strapi-provider-upload-azure-storage](https://github.com/jakeFeldman/strapi-provider-upload-azure-storage) project. It has been modified to meet specific personal requirements and may not align with the original design principles. These changes could potentially break compatibility and are unlikely to be suitable for most use cases.
 
 ## Getting Started
 
@@ -182,5 +182,5 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* strapi.io
-* Azure
+* [strapi.io](http://strapi.io)
+* [Azure](https://azure.microsoft.com/)

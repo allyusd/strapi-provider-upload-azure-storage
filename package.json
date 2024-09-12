@@ -1,6 +1,6 @@
 {
   "name": "@allyusd/strapi-provider-upload-azure-storage",
-  "version": "0.1.1",
+  "version": "0.1.4",
   "license": "MIT",
   "main": "dist/index.js",
   "scripts": {
@@ -21,10 +21,11 @@
     "isProvider": true
   },
   "repository": "https://github.com/allyusd/strapi-provider-upload-azure-storage",
-  "homepage": "http://strapi.io",
+  "homepage": "https://github.com/allyusd/strapi-provider-upload-azure-storage",
   "keywords": [
     "upload",
     "azure",
+    "storage",
     "blob",
     "strapi"
   ],
