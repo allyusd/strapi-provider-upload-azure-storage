@@ -8,6 +8,10 @@ Plugin enabling image uploading to azure storage from strapi.
 
 This is a fork of the original [jakeFeldman/strapi-provider-upload-azure-storage](https://github.com/jakeFeldman/strapi-provider-upload-azure-storage) project. It has been modified to meet specific personal requirements and may not align with the original design principles. These changes could potentially break compatibility and are unlikely to be suitable for most use cases.
 
+- Implemented getSignedUrl functions that always return a read-only signed URL, as isPrivate will always return true.
+- Implemented hackCustomFilename, where the @ character in the provided filename is converted to a / (path separator).
+- Allowed defaultPath to be empty.
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
